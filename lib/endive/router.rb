@@ -31,11 +31,9 @@ module Endive
         scope = options[:scope].to_s
         controller_name =  build_controller_name(options)
         action_name = options[:action] || path
-        route_type = options[:on] || :member
 
 
         path =  "/#{path}" if path[0] != '/'
-        scope = scope_to_collection scope if route_type == :collection
         path = scope + path if scope.present?
 
 
@@ -157,16 +155,20 @@ module Endive
 
 
     def member(&block)
-      @options[:on] = :member
+      old_scope = @options[:scope]
+      @options[:scope] = scope_for_member old_scope
       instance_eval(&block)
       @options[:on] = nil
+      @options[:scope] = old_scope
     end
 
 
     def collection(&block)
-      @options[:on] = :collection
+      old_scope = @options[:scope]
+      @options[:scope] = scope_for_collection old_scope
       instance_eval(&block)
       @options[:on] = nil
+      @options[:scope] = old_scope
     end
 
 
@@ -197,7 +199,21 @@ module Endive
       controller_name
     end
 
-    def scope_to_collection(scope_name)
+    def scope_for_member(scope_name)
+      index = scope_name.size - 1
+
+      while(scope_name[index] != ':' and index >= 0)
+        index -= 1
+      end
+
+      if index > 0
+        scope_name = scope_name[0..index - 1] + ':id'
+      end
+
+      scope_name
+    end
+
+    def scope_for_collection(scope_name)
       index = scope_name.size - 1
 
       while(scope_name[index] != ':' and index >= 0)

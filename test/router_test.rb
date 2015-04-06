@@ -124,7 +124,7 @@ class RouterTest < Minitest::Test
 
 
         'post' => {
-          '/admin/photos/:photo_id/publish' => 'admin/photos#publish'
+          '/admin/photos/:id/publish' => 'admin/photos#publish'
         },
 
         'delete' => {
@@ -207,6 +207,140 @@ class RouterTest < Minitest::Test
   end
 
 
+
+  def test_big_example
+
+    example = {
+
+        'get' => {
+
+            '/organizations/:organization_id/photos' => 'organizations/photos#index',
+            '/organizations/:organization_id/photos/:id' => 'organizations/photos#show',
+
+            '/organizations/:organization_id/clients' => 'organizations/clients#index',
+
+            '/organizations/:organization_id/friendship_offers' => 'organizations/friendship_offers#index',
+
+            '/organizations/:organization_id/friends' => 'organizations/friends#index',
+
+            '/organizations/:organization_id/movies' => 'organizations/movies#index',
+            '/organizations/:organization_id/movies/:id' => 'organizations/movies#show',
+
+            '/organizations/:organization_id/video_records' => 'organizations/video_records#index',
+            '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#show',
+
+            '/organizations/:organization_id/music/albums' => 'organizations/music/albums#index',
+            '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#show',
+
+
+
+
+        },
+
+        'post' => {
+
+            '/organizations/:organization_id/photos' => 'organizations/photos#create',
+            '/organizations/:organization_id/photos/:id/publish' => 'organizations/photos#publish',
+            '/organizations/:organization_id/friendship_offers' => 'organizations/friendship_offers#create',
+            '/organizations/:organization_id/movies' => 'organizations/movies#create',
+            '/organizations/:organization_id/video_records' => 'organizations/video_records#create',
+            '/organizations/:organization_id/video_records/:id/publish' => 'organizations/video_records#publish',
+            '/organizations/:organization_id/video_records/:id/add_to_profile' => 'organizations/video_records#add_to_profile',
+            '/organizations/:organization_id/music/albums' => 'organizations/music/albums#create',
+            '/organizations/:organization_id/music/albums/:id/change_state' => 'organizations/music/albums#change_state',
+
+
+
+
+
+        },
+
+        'put' => {
+
+            '/organizations/:organization_id/photos/:id' => 'organizations/photos#update',
+            '/organizations/:organization_id/friendship_offers/approve' => 'organizations/friendship_offers#approve',
+            '/organizations/:organization_id/movies/:id' => 'organizations/movies#update',
+            '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#update',
+            '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#update',
+
+        },
+
+        'delete' => {
+
+            '/organizations/:organization_id/photos/:id' => 'organizations/photos#destroy',
+            '/organizations/:organization_id/friendship_offers/remove' => 'organizations/friendship_offers#remove',
+            '/organizations/:organization_id/friends/:id' => 'organizations/friends#destroy',
+            '/organizations/:organization_id/movies/:id' => 'organizations/movies#destroy',
+            '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#destroy',
+            '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#destroy',
+
+        }
+
+
+    }
+
+
+    Endive::Router.build do
+
+
+      scope 'organizations/:organization_id', module: :organizations do
+
+        resources :photos, only: [:show, :index, :update, :destroy, :create] do
+          member do
+            post :publish
+          end
+
+        end
+
+        resources :clients, only: [:index]
+
+        resources :friendship_offers, only: [:index, :create] do
+
+          collection do
+            put :approve
+            delete :remove
+          end
+
+        end
+
+        resources :friends, only: [:index, :destroy]
+
+        resources :movies, only: [:show, :index, :update, :destroy, :create] do
+          member do
+            post :publish
+          end
+        end
+
+
+        resources :video_records, only: [:show, :index, :update, :destroy, :create] do
+          member do
+            post :publish
+            post :add_to_profile
+          end
+        end
+
+        scope 'music', module: :music do
+          resources :albums, only: [:index, :create, :update, :destroy, :show] do
+            member do
+              post :change_state
+            end
+          end
+        end
+
+      end
+
+    end
+
+
+    result = Endive::Router.routes
+
+    assert_equal true, compare(example, result)
+
+  end
+
+
+
+
   def test_find_route
 
     Endive::Router.build do
@@ -220,7 +354,6 @@ class RouterTest < Minitest::Test
 
     assert_equal route, '/comments/:id'
   end
-
 
 
   def show(routes)
