@@ -1,5 +1,14 @@
+require 'endive/router/base_method'
+require 'endive/router/helper'
+
 module Endive
   class Router
+    include BaseMethod
+    include Helper
+
+    DEFAULT_ACTIONS = [:index, :show, :destroy, :update, :create]
+
+
 
     def self.routes
       @routes ||= Hash.new
@@ -17,36 +26,7 @@ module Endive
     end
 
 
-    HTTPABLE = [:get, :post, :put, :delete, :options]
-    DEFAULT_ACTIONS = [:index, :show, :destroy, :update, :create]
 
-
-    HTTPABLE.each do |m|
-
-      define_method m do |path, options = {}, &block|
-
-        options = @options.merge options if @options.present?
-
-        mod = options[:module].to_s
-        scope = options[:scope].to_s
-        controller_name =  build_controller_name(options)
-        action_name = options[:action] || path
-
-
-        path =  "/#{path}" if path[0] != '/'
-        path = scope + path if scope.present?
-
-
-
-        options[:to] = "#{controller_name}##{action_name}" if options[:to].nil?
-
-        path = ::Mustermann.new path
-
-        self.class.add_route m.to_s, path, options[:to]
-
-      end
-
-    end
 
 
     def self.build(&block)
@@ -183,73 +163,6 @@ module Endive
 
     def concern(name, &block)
       @concerns[name] = lambda &block
-    end
-
-
-
-    private
-
-    def build_controller_name(options = {})
-      controller_name = options[:controller].to_s
-      mod = options[:module].to_s
-
-      if controller_name.present?
-        controller_name = "#{mod}/" + controller_name if mod.present?
-      else
-        controller_name = "#{mod}" if mod.present?
-      end
-
-      controller_name
-    end
-
-    def scope_for_member(scope_name)
-      return scope_name if @options[:param].present?
-
-      index = scope_name.size - 1
-
-      while(scope_name[index] != ':' and index >= 0)
-        index -= 1
-      end
-
-      if index > 0
-        scope_name = scope_name[0..index - 1] + ':id'
-      end
-
-      scope_name
-    end
-
-    def scope_for_collection(scope_name)
-      index = scope_name.size - 1
-
-      while(scope_name[index] != ':' and index >= 0)
-        index -= 1
-      end
-
-      if index > 0
-        scope_name = scope_name[0..index - 2]
-      end
-
-      scope_name
-    end
-
-    def concat_module_names(first, second)
-      return first unless second.present?
-      first.present? ? first.to_s + "/#{second}" : second
-    end
-
-    def concat_scope_names(first, second)
-      return first unless second.present?
-      first.to_s + "/#{second}"
-    end
-
-
-    def resource_path(name)
-      "/#{name}"
-    end
-
-    def resources_path(name, options = {})
-      param = options[:param] || "#{name[0..-2]}_id"
-      "/#{name}/:#{param}"
     end
 
   end
