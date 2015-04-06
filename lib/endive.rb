@@ -10,7 +10,7 @@ require 'endive/sym_hash'
 require 'endive/responder'
 require 'endive/router'
 require 'endive/base_controller'
-require 'endive/object_extencion'
+require 'endive/object_extension'
 require 'endive/controller_test_base'
 
 module Endive

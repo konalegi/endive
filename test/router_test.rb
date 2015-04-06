@@ -340,6 +340,35 @@ class RouterTest < Minitest::Test
 
 
 
+  def test_resources_param_option
+
+    example = {
+
+        'get' => {
+          '/comments' => 'comments#index',
+          '/comments/:gid' => 'comments#show'
+        },
+
+        'put' => {
+          '/comments/:gid' => 'comments#update'
+        }
+
+    }
+
+    Endive::Router.build do
+
+      resources :comments, only: [:show, :index, :update], param: :gid
+
+    end
+
+    result = Endive::Router.routes
+
+    assert_equal true, compare(example, result)
+
+  end
+
+
+
 
   def test_find_route
 

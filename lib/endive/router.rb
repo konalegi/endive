@@ -67,13 +67,14 @@ module Endive
       actions = options[:only] || DEFAULT_ACTIONS
       mod = options[:module].to_s
       scope = options[:scope].to_s
+      param = options[:param] || 'id'
 
 
       get "#{name}", action: :index, controller: name, module: mod, scope: scope  if actions.include? :index
-      get "#{name}/:id", action: :show, controller: name, module: mod, scope: scope if actions.include? :show
+      get "#{name}/:#{param}", action: :show, controller: name, module: mod, scope: scope if actions.include? :show
       post "#{name}", action: :create, controller: name, module: mod, scope: scope if actions.include? :create
-      put "#{name}/:id", action: :update, controller: name, module: mod, scope: scope if actions.include? :update
-      delete "#{name}/:id", action: :destroy, controller: name, module: mod, scope: scope if actions.include? :destroy
+      put "#{name}/:#{param}", action: :update, controller: name, module: mod, scope: scope if actions.include? :update
+      delete "#{name}/:#{param}", action: :destroy, controller: name, module: mod, scope: scope if actions.include? :destroy
 
 
 
@@ -81,11 +82,13 @@ module Endive
 
         @options[:module] = mod.present? ? "#{mod}" : nil
         @options[:controller] = name.to_s
-        @options[:scope] = scope + resources_path(name)
+        @options[:scope] = scope + resources_path(name, options)
+        @options[:param] = options[:param]
 
         block.call
 
         @options[:scope] = scope
+        @options[:param] = nil
 
       end
 
@@ -200,6 +203,8 @@ module Endive
     end
 
     def scope_for_member(scope_name)
+      return scope_name if @options[:param].present?
+
       index = scope_name.size - 1
 
       while(scope_name[index] != ':' and index >= 0)
@@ -242,8 +247,9 @@ module Endive
       "/#{name}"
     end
 
-    def resources_path(name)
-      "/#{name}/:#{name[0..-2]}_id"
+    def resources_path(name, options = {})
+      param = options[:param] || "#{name[0..-2]}_id"
+      "/#{name}/:#{param}"
     end
 
   end
