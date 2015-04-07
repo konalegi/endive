@@ -23,8 +23,6 @@ module Endive
 
           options[:to] = "#{controller_name}##{action_name}" if options[:to].nil?
 
-          path = ::Mustermann.new path
-
           self.class.add_route m.to_s, path, options[:to]
 
         end

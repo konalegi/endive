@@ -1,36 +1,21 @@
 require 'endive/router/base_method'
 require 'endive/router/helper'
+require 'endive/router/tree'
+
 
 module Endive
   class Router
     include BaseMethod
     include Helper
+    extend TreeRoutes
 
     DEFAULT_ACTIONS = [:index, :show, :destroy, :update, :create]
 
 
 
-    def self.routes
-      @routes ||= Hash.new
-    end
-
-    def self.add_route(method, path, controller_action)
-      hash = routes[method] || Hash.new
-      routes[method] = hash
-      hash[path] = controller_action
-    end
-
-
-    def self.find_route(method, path)
-      routes[method.to_s].keys.select { |k| k.match(path.to_s) }.first
-    end
-
-
-
-
 
     def self.build(&block)
-      @routes = {}
+      @routes_tree = nil
       builder = new block
     end
 
