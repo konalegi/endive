@@ -385,14 +385,20 @@ class RouterTest < Minitest::Test
   end
 
 
+
   def show(routes)
+    count = 0
+
     routes.each do |meth, value|
 
       value.each do |path , action|
+        count += 1
         p "#{meth.to_s.upcase}  #{path.to_s}  CONTROLLER : #{action}"
       end
 
     end
+
+    p "count = #{count}"
   end
 
   def compare(expected, actual, options = {})
