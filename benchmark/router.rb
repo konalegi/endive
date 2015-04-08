@@ -245,7 +245,7 @@ def test_benchmark
 
           resources :orders, only: [:index, :show], param: :token, defaults: { format: :json }
 
-          scope 'orders/:token/', module: :orders do
+          scope 'orders/:token', module: :orders do
 
             resource :contract, only: [:show] do
               member do
@@ -318,7 +318,7 @@ def test_benchmark
         resources :products, only: [:index, :show], defaults: { format: :json }
         resources :categories, only: [:index], defaults: { format: :json }
 
-        scope 'orders/:token/', module: :orders do
+        scope 'orders/:token', module: :orders do
           resource :shipping, only: [:create], defaults: { format: :json }
           resource :service_status, only: [:create, :show], defaults: { format: :json }
 
@@ -329,7 +329,7 @@ def test_benchmark
             end
           end
 
-          scope '/contract', module: :contracts do
+          scope 'contract', module: :contracts do
             resources :documents, only: [:create, :show, :index, :destroy]
           end
 
@@ -413,6 +413,9 @@ def test_benchmark
   ]
 
 
+  show(Endive::Router.routes)
+
+
   start_time = Time.now
 
 
@@ -439,7 +442,6 @@ def test_benchmark
   end
 
 
-  # show(Endive::Router.routes)
 
   end_time = Time.now
 
@@ -448,5 +450,23 @@ def test_benchmark
 
 
 end
+
+
+def show(routes)
+  count = 0
+
+  routes.each do |meth, value|
+
+    value.each do |path , action|
+      count += 1
+      p "#{meth.to_s.upcase}  #{path.to_s}  CONTROLLER : #{action}"
+    end
+
+  end
+
+  p "count = #{count}"
+end
+
+
 
 test_benchmark
