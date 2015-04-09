@@ -2,43 +2,31 @@ require 'test_helper'
 
 class RouterTest < Minitest::Test
 
-  def test_resources_method
-
+  def test_simple_resources_method
     example = {
-
       'get' => {
         '/photos' => 'photos#index',
         '/photos/:id' => 'photos#show',
       },
-
-      'post' => {
-        '/photos' => 'photos#create',
-      },
-
-      'put' => {
-        '/photos/:id' => 'photos#update',
-      },
-
-      'delete' => {
-        '/photos/:id' => 'photos#destroy'
-      }
-
+      'post' => { '/photos' => 'photos#create' },
+      'put' => { '/photos/:id' => 'photos#update' },
+      'delete' => { '/photos/:id' => 'photos#destroy' }
     }
 
-
     Endive::Router.build do
-
       resources :photos
-
     end
 
-    result =  Endive::Router.routes
-
-
-    assert_equal true, compare(example, result)
-
+    validate_router(example, Endive::Router)
   end
 
+  def validate_router(sample_routes, router)
+    sample_routes.each do  |method, routes_hash|
+      routes_hash.each do |route_path, controller|
+        assert_equal controller, router.find_route(method, route_path).fetch(:to)
+      end
+    end
+  end
 
 
 
@@ -71,7 +59,6 @@ class RouterTest < Minitest::Test
     end
 
     result = Endive::Router.routes
-
 
     assert_equal true, compare(example, result)
 
