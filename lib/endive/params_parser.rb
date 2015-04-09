@@ -13,11 +13,10 @@ module Endive
     JSON_TYPE = 'application/json'
     FORM_TYPE = 'application/x-www-form-urlencoded'
 
-    attr_reader :request, :mustermann
+    attr_reader :request
 
-    def initialize(request, mustermann)
+    def initialize(request)
       @request = request
-      @mustermann = mustermann
     end
 
 
@@ -27,7 +26,7 @@ module Endive
           parse_query_string
         when POST, PUT
           parse_query_string_and_post_body
-        end.merge mustermann.params(request.path)
+        end
     end
 
     def parse_formencoded str

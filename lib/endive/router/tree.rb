@@ -62,7 +62,7 @@ module Endive
         result = { params: { }, path: path, method: method, to: nil }
 
 
-        current_tree = routes.children[method]
+        current_tree = routes.children[method.to_s]
         scopes = path.split('/')
 
 

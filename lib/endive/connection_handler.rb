@@ -33,15 +33,17 @@ module Endive
       info "Start #{meth.upcase} #{request.path}"
 
       route = Router.find_route meth, request.path
+      controller_action = route[:to]
+      route_params = route[:params]
 
 
-      if route.present?
+      if controller_action.present?
         path = Mustermann.new request.path
-        controller_action = Router.routes[meth.to_s][Mustermann.new route]
         options = { to: controller_action }
 
         responder = Responder.new path, options
-        params = ParamsParser.new(request, route).get_params
+        params = ParamsParser.new(request).get_params
+        params.merge!(route_params)
 
         data, headers = responder.dispatch(params)
         request.respond :ok, headers, data
