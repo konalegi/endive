@@ -20,73 +20,28 @@ class RouterTest < Minitest::Test
     validate_router(example, Endive::Router)
   end
 
-  def validate_router(sample_routes, router)
-    sample_routes.each do  |method, routes_hash|
-      routes_hash.each do |route_path, controller|
-        assert_equal controller, router.find_route(method, route_path).fetch(:to)
-      end
-    end
-  end
-
-
-
-  def test_resource_method
+  def test_simple_resource_method
     example = {
-
-      'get' => {
-        '/photo' => 'photos#show',
-      },
-
-      'post' => {
-        '/photo' => 'photos#create',
-      },
-
-      'put' => {
-        '/photo' => 'photos#update',
-      },
-
-      'delete' => {
-        '/photo' => 'photos#destroy'
-      }
-
+      'get' => { '/photo' => 'photos#show' },
+      'post' => { '/photo' => 'photos#create' },
+      'put' => { '/photo' => 'photos#update' },
+      'delete' => { '/photo' => 'photos#destroy' }
     }
-
 
     Endive::Router.build do
-
       resource :photo
-
     end
 
-    result = Endive::Router.routes
-
-    assert_equal true, compare(example, result)
-
+    validate_router(example, Endive::Router)
   end
 
-
-  def test_namespace_method
-
+  def test_namespace_routes
     example = {
-
-        'get' => {
-            '/admin/photo' => 'admin/photos#show',
-        },
-
-        'post' => {
-            '/admin/photo' => 'admin/photos#create',
-        },
-
-        'put' => {
-            '/admin/photo' => 'admin/photos#update',
-        },
-
-        'delete' => {
-            '/admin/photo' => 'admin/photos#destroy'
-        }
-
+      'get' => { '/admin/photo' => 'admin/photos#show' },
+      'post' => { '/admin/photo' => 'admin/photos#create' },
+      'put' => { '/admin/photo' => 'admin/photos#update' },
+      'delete' => { '/admin/photo' => 'admin/photos#destroy' }
     }
-
 
     Endive::Router.build do
       namespace :admin do
@@ -94,38 +49,21 @@ class RouterTest < Minitest::Test
       end
     end
 
-    result =  Endive::Router.routes
-    assert_equal true, compare(example, result)
-
+    validate_router(example, Endive::Router)
   end
 
-
   def test_member_and_collection
-
-
     example = {
-
-        'get' => {
-          '/admin/photos' => 'admin/photos#index',
-        },
-
-
-        'post' => {
-          '/admin/photos/:id/publish' => 'admin/photos#publish'
-        },
-
-        'delete' => {
-          '/admin/photos/delete_all' => 'admin/photos#delete_all'
-        }
-
-
+      'get' => { '/admin/photos' => 'admin/photos#index' },
+      'post' => { '/admin/photos/:id/publish' => 'admin/photos#publish' },
+      'delete' => { '/admin/photos/delete_all' => 'admin/photos#delete_all' }
     }
-
 
     Endive::Router.build do
       namespace :admin do
 
         resources :photos, only: [:index] do
+
           member do
             post :publish
           end
@@ -135,37 +73,26 @@ class RouterTest < Minitest::Test
           end
 
         end
-
       end
     end
 
-    result = Endive::Router.routes
-    assert_equal true, compare(example, result)
-
-
+    validate_router(example, Endive::Router)
   end
 
-
   def test_concerns
-
     example = {
+      'get' => {
+        '/user/photos' => 'users/photos#index',
+        '/user/photos/:id' => 'users/photos#show',
+        '/posts/:post_id/photos' => 'posts/photos#index',
+        '/posts/:post_id/photos/:id' => 'posts/photos#show',
+        '/posts/:post_id/comments' => 'posts/comments#index'
+      },
 
-        'get' => {
-          '/user/photos' => 'users/photos#index',
-          '/user/photos/:id' => 'users/photos#show',
-          '/posts/:post_id/photos' => 'posts/photos#index',
-          '/posts/:post_id/photos/:id' => 'posts/photos#show',
-          '/posts/:post_id/comments' => 'posts/comments#index'
-
-        },
-
-        'post' => {
-          '/posts/:post_id/comments' => 'posts/comments#create'
-        }
-
+      'post' => {
+        '/posts/:post_id/comments' => 'posts/comments#create'
+      }
     }
-
-
 
     Endive::Router.build do
 
@@ -177,7 +104,6 @@ class RouterTest < Minitest::Test
         resources :comments, only: [:create, :index]
       end
 
-
       scope 'user', module: :users do
         concerns :photos
       end
@@ -188,9 +114,7 @@ class RouterTest < Minitest::Test
 
     end
 
-    result = Endive::Router.routes
-    assert_equal true, compare(example, result)
-
+    validate_router(example, Endive::Router)
   end
 
 
@@ -200,75 +124,50 @@ class RouterTest < Minitest::Test
     example = {
 
         'get' => {
-
-            '/organizations/:organization_id/photos' => 'organizations/photos#index',
-            '/organizations/:organization_id/photos/:id' => 'organizations/photos#show',
-
-            '/organizations/:organization_id/clients' => 'organizations/clients#index',
-
-            '/organizations/:organization_id/friendship_offers' => 'organizations/friendship_offers#index',
-
-            '/organizations/:organization_id/friends' => 'organizations/friends#index',
-
-            '/organizations/:organization_id/movies' => 'organizations/movies#index',
-            '/organizations/:organization_id/movies/:id' => 'organizations/movies#show',
-
-            '/organizations/:organization_id/video_records' => 'organizations/video_records#index',
-            '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#show',
-
-            '/organizations/:organization_id/music/albums' => 'organizations/music/albums#index',
-            '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#show',
-
-
-
-
+          '/organizations/:organization_id/photos' => 'organizations/photos#index',
+          '/organizations/:organization_id/photos/:id' => 'organizations/photos#show',
+          '/organizations/:organization_id/clients' => 'organizations/clients#index',
+          '/organizations/:organization_id/friendship_offers' => 'organizations/friendship_offers#index',
+          '/organizations/:organization_id/friends' => 'organizations/friends#index',
+          '/organizations/:organization_id/movies' => 'organizations/movies#index',
+          '/organizations/:organization_id/movies/:id' => 'organizations/movies#show',
+          '/organizations/:organization_id/video_records' => 'organizations/video_records#index',
+          '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#show',
+          '/organizations/:organization_id/music/albums' => 'organizations/music/albums#index',
+          '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#show',
         },
 
         'post' => {
-
-            '/organizations/:organization_id/photos' => 'organizations/photos#create',
-            '/organizations/:organization_id/photos/:id/publish' => 'organizations/photos#publish',
-            '/organizations/:organization_id/friendship_offers' => 'organizations/friendship_offers#create',
-            '/organizations/:organization_id/movies' => 'organizations/movies#create',
-            '/organizations/:organization_id/video_records' => 'organizations/video_records#create',
-            '/organizations/:organization_id/video_records/:id/publish' => 'organizations/video_records#publish',
-            '/organizations/:organization_id/video_records/:id/add_to_profile' => 'organizations/video_records#add_to_profile',
-            '/organizations/:organization_id/music/albums' => 'organizations/music/albums#create',
-            '/organizations/:organization_id/music/albums/:id/change_state' => 'organizations/music/albums#change_state',
-
-
-
-
-
+          '/organizations/:organization_id/photos' => 'organizations/photos#create',
+          '/organizations/:organization_id/photos/:id/publish' => 'organizations/photos#publish',
+          '/organizations/:organization_id/friendship_offers' => 'organizations/friendship_offers#create',
+          '/organizations/:organization_id/movies' => 'organizations/movies#create',
+          '/organizations/:organization_id/video_records' => 'organizations/video_records#create',
+          '/organizations/:organization_id/video_records/:id/publish' => 'organizations/video_records#publish',
+          '/organizations/:organization_id/video_records/:id/add_to_profile' => 'organizations/video_records#add_to_profile',
+          '/organizations/:organization_id/music/albums' => 'organizations/music/albums#create',
+          '/organizations/:organization_id/music/albums/:id/change_state' => 'organizations/music/albums#change_state',
         },
 
         'put' => {
-
-            '/organizations/:organization_id/photos/:id' => 'organizations/photos#update',
-            '/organizations/:organization_id/friendship_offers/approve' => 'organizations/friendship_offers#approve',
-            '/organizations/:organization_id/movies/:id' => 'organizations/movies#update',
-            '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#update',
-            '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#update',
-
+          '/organizations/:organization_id/photos/:id' => 'organizations/photos#update',
+          '/organizations/:organization_id/friendship_offers/approve' => 'organizations/friendship_offers#approve',
+          '/organizations/:organization_id/movies/:id' => 'organizations/movies#update',
+          '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#update',
+          '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#update',
         },
 
         'delete' => {
-
-            '/organizations/:organization_id/photos/:id' => 'organizations/photos#destroy',
-            '/organizations/:organization_id/friendship_offers/remove' => 'organizations/friendship_offers#remove',
-            '/organizations/:organization_id/friends/:id' => 'organizations/friends#destroy',
-            '/organizations/:organization_id/movies/:id' => 'organizations/movies#destroy',
-            '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#destroy',
-            '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#destroy',
-
+          '/organizations/:organization_id/photos/:id' => 'organizations/photos#destroy',
+          '/organizations/:organization_id/friendship_offers/remove' => 'organizations/friendship_offers#remove',
+          '/organizations/:organization_id/friends/:id' => 'organizations/friends#destroy',
+          '/organizations/:organization_id/movies/:id' => 'organizations/movies#destroy',
+          '/organizations/:organization_id/video_records/:id' => 'organizations/video_records#destroy',
+          '/organizations/:organization_id/music/albums/:id' => 'organizations/music/albums#destroy',
         }
-
-
     }
 
-
     Endive::Router.build do
-
 
       scope 'organizations/:organization_id', module: :organizations do
 
@@ -298,7 +197,6 @@ class RouterTest < Minitest::Test
           end
         end
 
-
         resources :video_records, only: [:show, :index, :update, :destroy, :create] do
           member do
             post :publish
@@ -318,42 +216,28 @@ class RouterTest < Minitest::Test
 
     end
 
-
-    result = Endive::Router.routes
-
-    assert_equal true, compare(example, result)
-
+    validate_router(example, Endive::Router)
   end
-
-
 
   def test_resources_param_option
 
     example = {
+      'get' => {
+        '/comments' => 'comments#index',
+        '/comments/:gid' => 'comments#show'
+      },
 
-        'get' => {
-          '/comments' => 'comments#index',
-          '/comments/:gid' => 'comments#show'
-        },
-
-        'put' => {
-          '/comments/:gid' => 'comments#update'
-        }
-
+      'put' => { '/comments/:gid' => 'comments#update' }
     }
 
     Endive::Router.build do
-
       resources :comments, only: [:show, :index, :update], param: :gid
-
     end
 
-    result = Endive::Router.routes
-
-    assert_equal true, compare(example, result)
-
+    validate_router(example, Endive::Router)
   end
 
+<<<<<<< HEAD
 
 
 
@@ -381,31 +265,16 @@ class RouterTest < Minitest::Test
       value.each do |path , action|
         count += 1
         p "#{meth.to_s.upcase}  #{path.to_s}  CONTROLLER : #{action}"
+=======
+  def validate_router(sample_routes, router)
+    sample_routes.each do  |method, routes_hash|
+      routes_hash.each do |route_path, controller|
+        assert_equal controller, router.find_route(method, route_path).fetch(:to)
+>>>>>>> fix routes tests
       end
-
     end
 
     p "count = #{count}"
   end
-
-  def compare(expected, actual, options = {})
-
-    # expected.each do |meth, value|
-    #
-    #   value.each do |path, action|
-    #     if options[:debug].present?
-    #       p path
-    #       p action
-    #       p actual[meth][Mustermann.new path]
-    #     end
-    #
-    #     return false if action != actual[meth][Mustermann.new path]
-    #   end
-    #
-    # end
-
-    true
-  end
-
 
 end
