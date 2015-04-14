@@ -1,7 +1,5 @@
 module Endive
-
   module Router
-
     module Resources
 
       RESOURCE_OPTIONS  = [:as, :controller, :path, :only, :except, :param, :concerns]
@@ -86,6 +84,11 @@ module Endive
         end
       end
 
+      def action_path(name, path = nil) #:nodoc:
+        name = name.to_sym if name.is_a?(String)
+        path || @scope[:path_names][name] || name.to_s
+      end
+
       def canonical_action?(action) #:nodoc:
         resource_method_scope? && CANONICAL_ACTIONS.include?(action.to_s)
       end
@@ -99,21 +102,19 @@ module Endive
         end
       ensure
         @nesting.pop
+        @scope = @scope.parent
       end
 
       def collection
+        unless resource_scope?
+          raise ArgumentError, "can't use nested outside resource(s) scope"
+        end
+
         with_scope_level(:collection) do
           scope(parent_resource.collection_scope) do
             yield
           end
         end
-      end
-
-      def with_scope_level(kind)
-        @scope = @scope.new_level(kind)
-        yield
-      ensure
-        @scope = @scope.parent
       end
 
       def member
@@ -126,13 +127,23 @@ module Endive
         end
       end
 
-      def resource_scope? #:nodoc:
-        @scope.resource_scope?
+      def with_scope_level(kind)
+        @scope = @scope.new_level(kind)
+        yield
+      ensure
+        @scope = @scope.parent
       end
 
-      def action_path(name, path = nil) #:nodoc:
-        name = name.to_sym if name.is_a?(String)
-        path || @scope[:path_names][name] || name.to_s
+      def namespace(path, options = {})
+        if resource_scope?
+          nested { super }
+        else
+          super
+        end
+      end
+
+      def resource_scope? #:nodoc:
+        @scope.resource_scope?
       end
 
       def resource_method_scope? #:nodoc:
@@ -149,9 +160,9 @@ module Endive
         end
 
         paths.each do |_path|
+
           route_options = options.dup
           route_options[:path] ||= _path  if _path.is_a?(String)
-          route_options[:path] = Endive::Router::Mapper.normalize_path(route_options[:path])
           add_route(_path, route_options)
         end
         self
@@ -175,6 +186,7 @@ module Endive
       end
 
       def generate_controller(options)
+
         controller = options.delete(:controller) || @scope[:controller]
 
         if @scope[:module] && !controller.is_a?(Regexp)
@@ -188,7 +200,5 @@ module Endive
       end
 
     end
-
   end
-
 end

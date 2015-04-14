@@ -51,15 +51,34 @@ class RouterTest < Minitest::Test
 
   def test_namespace_routes
     example = {
-      'get' => { '/admin/photos' => 'admin/photos#index' },
-      'get' => { '/admin/photos/:id' => 'admin/photos#show' },
-      'post' => { '/admin/photos' => 'admin/photos#create' },
-      'put' => { '/admin/photos/:id' => 'admin/photos#update' },
-      'delete' => { '/admin/photos/:id' => 'admin/photos#destroy' }
+      'get' => {
+        '/admin/photos' => 'admin/photos#index' ,
+        '/v1/photos' => 'v1/photos#index'
+        },
+      'get' => {
+        '/admin/photos/:id' => 'admin/photos#show',
+        '/v1/photos/:id' => 'v1/photos#show'
+      },
+      'post' => {
+        '/admin/photos' => 'admin/photos#create',
+        '/v1/photos' => 'v1/photos#create'
+      },
+      'put' => {
+        '/admin/photos/:id' => 'admin/photos#update',
+        '/v1/photos/:id' => 'v1/photos#update'
+      },
+      'delete' => {
+        '/admin/photos/:id' => 'admin/photos#destroy',
+        '/v1/photos/:id' => 'v1/photos#destroy'
+      }
     }
 
     Endive::Router::Mapper.build do
       namespace :admin do
+        resources :photos
+      end
+
+      namespace :v1 do
         resources :photos
       end
     end
