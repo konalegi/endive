@@ -30,6 +30,7 @@ module Endive
 
       include Endive::Router::HttpHelpers
       include Endive::Router::Scoping
+      include Endive::Router::Concerns
       include Endive::Router::Resources
     end
   end
