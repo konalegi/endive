@@ -17,7 +17,6 @@ module Endive
           else
             value = options.delete(option)
           end
-
           if value
             scope[option] = send("merge_#{option}_scope", @scope[option], value)
           end
@@ -28,6 +27,18 @@ module Endive
         self
       ensure
         @scope = @scope.parent
+      end
+
+      def namespace(path, options = {})
+        path = path.to_s
+
+        defaults = {
+          module:         path,
+          path:           options.fetch(:path, path),
+          as:             options.fetch(:as, path),
+        }
+
+        scope(defaults.merge!(options)) { yield }
       end
 
       private

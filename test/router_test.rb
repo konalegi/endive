@@ -51,19 +51,20 @@ class RouterTest < Minitest::Test
 
   def test_namespace_routes
     example = {
-      'get' => { '/admin/photo' => 'admin/photos#show' },
-      'post' => { '/admin/photo' => 'admin/photos#create' },
-      'put' => { '/admin/photo' => 'admin/photos#update' },
-      'delete' => { '/admin/photo' => 'admin/photos#destroy' }
+      'get' => { '/admin/photos' => 'admin/photos#index' },
+      'get' => { '/admin/photos/:id' => 'admin/photos#show' },
+      'post' => { '/admin/photos' => 'admin/photos#create' },
+      'put' => { '/admin/photos/:id' => 'admin/photos#update' },
+      'delete' => { '/admin/photos/:id' => 'admin/photos#destroy' }
     }
 
-    Endive::Router.build do
+    Endive::Router::Mapper.build do
       namespace :admin do
-        resource :photo
+        resources :photos
       end
     end
 
-    validate_router(example, Endive::Router)
+    validate_router(example, Endive::Router::Mapper.instance.router)
   end
 
   def test_member_and_collection
@@ -73,7 +74,7 @@ class RouterTest < Minitest::Test
       'delete' => { '/admin/photos/delete_all' => 'admin/photos#delete_all' }
     }
 
-    Endive::Router.build do
+    Endive::Router::Mapper.build do
       namespace :admin do
 
         resources :photos, only: [:index] do
@@ -90,7 +91,7 @@ class RouterTest < Minitest::Test
       end
     end
 
-    validate_router(example, Endive::Router)
+    validate_router(example, Endive::Router::Mapper.instance.router)
   end
 
   def test_concerns
@@ -108,7 +109,7 @@ class RouterTest < Minitest::Test
       }
     }
 
-    Endive::Router.build do
+    Endive::Router::Mapper.build do
 
       concern :photos do
         resources :photos, only: [:index, :show]
@@ -128,7 +129,7 @@ class RouterTest < Minitest::Test
 
     end
 
-    validate_router(example, Endive::Router)
+    validate_router(example, Endive::Router::Mapper.instance.router)
   end
 
 
@@ -181,7 +182,7 @@ class RouterTest < Minitest::Test
         }
     }
 
-    Endive::Router.build do
+    Endive::Router::Mapper.build do
 
       scope 'organizations/:organization_id', module: :organizations do
 
@@ -230,7 +231,7 @@ class RouterTest < Minitest::Test
 
     end
 
-    validate_router(example, Endive::Router)
+    validate_router(example, Endive::Router::Mapper.instance.router)
   end
 
   def test_resources_param_option
@@ -244,11 +245,11 @@ class RouterTest < Minitest::Test
       'put' => { '/comments/:gid' => 'comments#update' }
     }
 
-    Endive::Router.build do
+    Endive::Router::Mapper.build do
       resources :comments, only: [:show, :index, :update], param: :gid
     end
 
-    validate_router(example, Endive::Router)
+    validate_router(example, Endive::Router::Mapper.instance.router)
   end
 
 <<<<<<< HEAD

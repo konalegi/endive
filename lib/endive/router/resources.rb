@@ -167,11 +167,24 @@ module Endive
           action = nil
         end
 
-        controller = options.delete(:controller) || @scope[:controller]
+        controller = generate_controller(options)
         action     = options.delete(:action) || @scope[:action]
         via        = options.delete(:via)
         path  = Endive::Router::Mapper.normalize_path(path)
         @router.add_route(via, path, controller, action, options)
+      end
+
+      def generate_controller(options)
+        controller = options.delete(:controller) || @scope[:controller]
+
+        if @scope[:module] && !controller.is_a?(Regexp)
+          if controller =~ %r{\A/}
+            controller = controller[1..-1]
+          else
+            controller = [@scope[:module], controller].compact.join('/').presence
+          end
+        end
+        controller
       end
 
     end
