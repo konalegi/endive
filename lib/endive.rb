@@ -3,14 +3,16 @@ require 'mustermann'
 require 'jbuilder'
 require 'minitest/autorun'
 
-require "endive/version"
+require 'endive/version'
 require 'endive/connection_handler'
 require 'endive/params_parser'
 require 'endive/sym_hash'
 require 'endive/responder'
 require 'endive/router'
 require 'endive/base_controller'
-require 'endive/object_extension'
+require 'endive/core_ext/array'
+require 'endive/core_ext/object'
+require 'endive/core_ext/hash'
 require 'endive/controller_test_base'
 
 module Endive

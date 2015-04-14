@@ -2,6 +2,35 @@ require 'test_helper'
 
 class RouterTest < Minitest::Test
 
+
+  def test_match_methods
+    example = {
+      'get' => {
+        '/photos' => 'photos#index',
+        '/photos/:id' => 'photos#show',
+      },
+      'post' => { '/photos' => 'photos#create' },
+      'put' => { '/photos/:id' => 'photos#update' },
+      'delete' => { '/photos/:id' => 'photos#destroy' },
+      'patch' => { '/photos/:id' => 'photos#update' },
+
+      'get' => { '/photos/custom_action' => 'photos#custom_action' },
+      'post' => { '/photos/custom_action' => 'photos#custom_action' }
+    }
+
+    Endive::Router::Mapper.build do
+      post   'photos',      controller: 'photos', action: :create
+      get    'photos',      controller: 'photos', action: :index
+      get    'photos/:id',  controller: 'photos', action: :show
+      put    'photos/:id',  controller: 'photos', action: :update
+      patch  'photos/:id',  controller: 'photos', action: :update
+      delete 'photos/:id',  controller: 'photos', action: :destroy
+      match  'photos/custom_action', controller: 'photos', action: :custom_action, via: [:get, :post]
+    end
+
+    validate_router(example, Endive::Router::Mapper.instance.router)
+  end
+
   def test_simple_resources_method
     example = {
       'get' => {
@@ -13,26 +42,11 @@ class RouterTest < Minitest::Test
       'delete' => { '/photos/:id' => 'photos#destroy' }
     }
 
-    Endive::Router.build do
+    Endive::Router::Mapper.build do
       resources :photos
     end
 
-    validate_router(example, Endive::Router)
-  end
-
-  def test_simple_resource_method
-    example = {
-      'get' => { '/photo' => 'photos#show' },
-      'post' => { '/photo' => 'photos#create' },
-      'put' => { '/photo' => 'photos#update' },
-      'delete' => { '/photo' => 'photos#destroy' }
-    }
-
-    Endive::Router.build do
-      resource :photo
-    end
-
-    validate_router(example, Endive::Router)
+    validate_router(example, Endive::Router::Mapper.instance.router)
   end
 
   def test_namespace_routes
@@ -269,8 +283,13 @@ class RouterTest < Minitest::Test
   def validate_router(sample_routes, router)
     sample_routes.each do  |method, routes_hash|
       routes_hash.each do |route_path, controller|
+<<<<<<< HEAD
         assert_equal controller, router.find_route(method, route_path).fetch(:to)
 >>>>>>> fix routes tests
+=======
+        route_obj = router.find_route(method, route_path)
+        assert_equal controller, "#{route_obj[:controller]}##{route_obj[:action]}"
+>>>>>>> simple route parsing with new dsl
       end
     end
 
