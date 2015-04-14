@@ -21,7 +21,7 @@ module Endive
 
       def initialize(block)
         @router = Endive::Router::TreeRouter.new
-        @scope = Endive::Router::Scope.new({})
+        @scope = Endive::Router::Scope.new({ path_names: {}})
         @concerns = {}
         @nesting = []
 
