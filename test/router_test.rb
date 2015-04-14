@@ -308,8 +308,13 @@ class RouterTest < Minitest::Test
 >>>>>>> fix routes tests
 =======
         route_obj = router.find_route(method, route_path)
+<<<<<<< HEAD
         assert_equal controller, "#{route_obj[:controller]}##{route_obj[:action]}"
 >>>>>>> simple route parsing with new dsl
+=======
+        route_and_action = "#{route_obj[:controller]}##{route_obj[:action]}" if route_obj
+        assert_equal controller, route_and_action, "cant found route for method: #{method} and route: #{route_path}"
+>>>>>>> add more info on test failure
       end
     end
 
