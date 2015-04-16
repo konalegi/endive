@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RouterTest < Minitest::Test
+class MapperTest < Minitest::Test
 
 
   def test_match_methods
@@ -18,7 +18,7 @@ class RouterTest < Minitest::Test
       'post' => { '/photos/custom_action' => 'photos#custom_action' }
     }
 
-    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
       post   'photos',      controller: 'photos', action: :create
       get    'photos',      controller: 'photos', action: :index
       get    'photos/:id',  controller: 'photos', action: :show
@@ -28,7 +28,7 @@ class RouterTest < Minitest::Test
       match  'photos/custom_action', controller: 'photos', action: :custom_action, via: [:get, :post]
     end
 
-    validate_router(example, Endive::Router::Mapper.instance.router)
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
   def test_simple_resources_method
@@ -42,11 +42,11 @@ class RouterTest < Minitest::Test
       'delete' => { '/photos/:id' => 'photos#destroy' }
     }
 
-    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
       resources :photos
     end
 
-    validate_router(example, Endive::Router::Mapper.instance.router)
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
   def test_namespace_routes
@@ -73,7 +73,7 @@ class RouterTest < Minitest::Test
       }
     }
 
-    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
       namespace :admin do
         resources :photos
       end
@@ -83,7 +83,7 @@ class RouterTest < Minitest::Test
       end
     end
 
-    validate_router(example, Endive::Router::Mapper.instance.router)
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
   def test_member_and_collection
@@ -93,7 +93,7 @@ class RouterTest < Minitest::Test
       'delete' => { '/admin/photos/delete_all' => 'admin/photos#delete_all' }
     }
 
-    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
       namespace :admin do
 
         resources :photos, only: [:index] do
@@ -110,7 +110,7 @@ class RouterTest < Minitest::Test
       end
     end
 
-    validate_router(example, Endive::Router::Mapper.instance.router)
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
   def test_concerns
@@ -128,7 +128,7 @@ class RouterTest < Minitest::Test
       }
     }
 
-    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
 
       concern :photos do
         resources :photos, only: [:index, :show]
@@ -148,7 +148,7 @@ class RouterTest < Minitest::Test
 
     end
 
-    validate_router(example, Endive::Router::Mapper.instance.router)
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
 
@@ -201,7 +201,7 @@ class RouterTest < Minitest::Test
         }
     }
 
-    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
 
       scope 'organizations/:organization_id', module: :organizations do
 
@@ -250,7 +250,7 @@ class RouterTest < Minitest::Test
 
     end
 
-    validate_router(example, Endive::Router::Mapper.instance.router)
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
   def test_resources_param_option
@@ -264,11 +264,11 @@ class RouterTest < Minitest::Test
       'put' => { '/comments/:gid' => 'comments#update' }
     }
 
-    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
       resources :comments, only: [:show, :index, :update], param: :gid
     end
 
-    validate_router(example, Endive::Router::Mapper.instance.router)
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
 <<<<<<< HEAD

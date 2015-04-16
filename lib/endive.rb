@@ -8,11 +8,9 @@ require 'endive/connection_handler'
 require 'endive/params_parser'
 require 'endive/sym_hash'
 require 'endive/responder'
-require 'endive/router'
+require 'endive/routing'
+require 'endive/core_ext'
 require 'endive/base_controller'
-require 'endive/core_ext/array'
-require 'endive/core_ext/object'
-require 'endive/core_ext/hash'
 require 'endive/controller_test_base'
 
 module Endive
