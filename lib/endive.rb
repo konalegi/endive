@@ -4,14 +4,12 @@ require 'jbuilder'
 require 'minitest/autorun'
 
 require 'endive/version'
-require 'endive/connection_handler'
-require 'endive/params_parser'
-require 'endive/sym_hash'
-require 'endive/responder'
-require 'endive/routing'
 require 'endive/core_ext'
-require 'endive/base_controller'
-require 'endive/controller_test_base'
+require 'endive/dispatch'
+require 'endive/routing'
+require 'endive/support'
+require 'endive/testing'
+
 
 module Endive
 
