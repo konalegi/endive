@@ -32,28 +32,24 @@ module Endive
 
           def set_child(path)
             opts = { path: path, parent: self }
-            if path_parameterized?(path)
+            node = Node.new(opts)
+            if node.parameterized?
               raise ArgumentError.new('Only one parameterized child per node') if @parameterized_child
-              @parameterized_child = Node.new(opts)
+              @parameterized_child = node
             else
-              @childs[path] = Node.new(opts)
+              @childs[path] = node
             end
 
-            get_child(path)
+            node
           end
 
           def parameterized?
-            path[0] == ':'
+            @parameterized ||= (path[0] == ':')
           end
 
           def childs
             @childs.keys + Array.wrap(@parameterized_child.try(:path))
           end
-
-          private
-            def path_parameterized?(path)
-              path[0] == ':'
-            end
         end
       end
     end
