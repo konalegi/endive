@@ -7,48 +7,12 @@ module Endive
         RESOURCE_OPTIONS  = [:as, :controller, :path, :only, :except, :param, :concerns]
         CANONICAL_ACTIONS = %w(index create new show update destroy)
 
-        class Resource #:nodoc:
-          attr_reader :controller, :path, :options, :param
-
-          def initialize(entities, options = {})
-            @name       = entities.to_s
-            @path       = (options[:path] || @name).to_s
-            @controller = (options[:controller] || @name).to_s
-            @as         = options[:as]
-            @param      = (options[:param] || :id).to_sym
-            @options    = options
-          end
-
-          def default_actions
-            [:index, :create, :show, :update, :destroy]
-          end
-
-          def actions
-            if only = @options[:only]
-              Array(only).map(&:to_sym)
-            elsif except = @options[:except]
-              default_actions - Array(except).map(&:to_sym)
-            else
-              default_actions
-            end
-          end
-
-          def resource_scope
-            { :controller => controller }
-          end
-
-          def member_scope
-            "#{path}/:#{param}"
-          end
-
-          alias :collection_scope :path
-        end
-
-        class SingularResource < Resource
-        end
-
         def resources(*resources, &block)
           options = resources.extract_options!.dup
+
+          if apply_common_behavior_for(:resources, resources, options, &block)
+            return self
+          end
 
           resource_scope(:resources, Resource.new(resources.pop, options)) do
             yield if block_given?
@@ -74,21 +38,39 @@ module Endive
           self
         end
 
-        def parent_resource #:nodoc:
-          @scope[:scope_level_resource]
+        def nested_options #:nodoc:
+          { :as => parent_resource.member_name }
         end
 
-        def path_for_action(action, path) #:nodoc:
-          if path.blank? && canonical_action?(action)
-            @scope[:path].to_s
-          else
-            "#{@scope[:path]}/#{action_path(action, path)}"
+
+        def apply_common_behavior_for(method, resources, options, &block) #:nodoc:
+          if resources.length > 1
+            resources.each { |r| send(method, r, options, &block) }
+            return true
           end
-        end
 
-        def action_path(name, path = nil) #:nodoc:
-          name = name.to_sym if name.is_a?(String)
-          path || @scope[:path_names][name] || name.to_s
+          if resource_scope?
+            nested { send(method, resources.pop, options, &block) }
+            return true
+          end
+
+          options.keys.each do |k|
+            (options[:constraints] ||= {})[k] = options.delete(k) if options[k].is_a?(Regexp)
+          end
+
+          scope_options = options.slice!(*RESOURCE_OPTIONS)
+          unless scope_options.empty?
+            scope(scope_options) do
+              send(method, resources.pop, options, &block)
+            end
+            return true
+          end
+
+          unless action_options?(options)
+            options.merge!(scope_action_options) if scope_action_options?
+          end
+
+          false
         end
 
         def canonical_action?(action) #:nodoc:
@@ -105,6 +87,16 @@ module Endive
         ensure
           @nesting.pop
           @scope = @scope.parent
+        end
+
+        def nested
+          unless resource_scope?
+            raise ArgumentError, "can't use nested outside resource(s) scope"
+          end
+
+          with_scope_level(:nested) do
+            scope(parent_resource.nested_scope, nested_options) { yield }
+          end
         end
 
         def collection
@@ -144,14 +136,6 @@ module Endive
           end
         end
 
-        def resource_scope? #:nodoc:
-          @scope.resource_scope?
-        end
-
-        def resource_method_scope? #:nodoc:
-          @scope.resource_method_scope?
-        end
-
         # match 'path', controller: :photos, action: :update, via: [:post, :get]
         def match(path, *rest)
           options = rest.extract_options!
@@ -165,9 +149,33 @@ module Endive
 
             route_options = options.dup
             route_options[:path] ||= _path  if _path.is_a?(String)
-            add_route(_path, route_options)
+            decomposed_match(_path, route_options)
           end
           self
+        end
+
+        def path_for_action(action, path) #:nodoc:
+          if path.blank? && canonical_action?(action)
+            @scope[:path].to_s
+          else
+            "#{@scope[:path]}/#{action_path(action, path)}"
+          end
+        end
+
+        def action_path(name, path = nil) #:nodoc:
+          name = name.to_sym if name.is_a?(String)
+          path || @scope[:path_names][name] || name.to_s
+        end
+
+        def decomposed_match(path, options) # :nodoc:
+          case @scope.scope_level
+          when :resources
+            nested { decomposed_match(path, options) }
+          when :resource
+            member { decomposed_match(path, options) }
+          else
+            add_route(path, options)
+          end
         end
 
         def add_route(action, options)
@@ -199,6 +207,30 @@ module Endive
             end
           end
           controller
+        end
+
+        def action_options?(options) #:nodoc:
+          options[:only] || options[:except]
+        end
+
+        def scope_action_options? #:nodoc:
+          @scope[:options] && (@scope[:options][:only] || @scope[:options][:except])
+        end
+
+        def scope_action_options #:nodoc:
+          @scope[:options].slice(:only, :except)
+        end
+
+        def parent_resource #:nodoc:
+          @scope[:scope_level_resource]
+        end
+
+        def resource_scope? #:nodoc:
+          @scope.resource_scope?
+        end
+
+        def resource_method_scope? #:nodoc:
+          @scope.resource_method_scope?
         end
 
       end

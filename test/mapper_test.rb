@@ -144,6 +144,52 @@ class MapperTest < Minitest::Test
     validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
+  def test_resources_nesting
+
+    example = {
+      'get' => {
+        '/v1/users/:user_id/photos/:photo_id/likes/:id' => 'v1/likes#show',
+        '/v1/users/:user_id/photos/:photo_id/comments/:id' => 'v1/comments#show',
+        '/v2/persons/:person_id/photos/:photo_id/comments/:id' => 'v2/comments#show',
+        '/v2/persons/:person_id/photos/:photo_id/likes/:id' => 'v2/likes#show',
+
+
+        '/v2/persons/:person_id/photos/:photo_id/likes' => 'v2/likes#index',
+        '/v2/persons/:person_id/photos/:photo_id/comments' => 'v2/comments#index',
+
+        '/v2/persons/:person_id/photos' => 'v2/photos#index',
+        '/v2/persons/:person_id/photos/:id' => 'v2/photos#show'
+
+      }
+    }
+
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+      concern :photos_concern do
+        resources :photos do
+          resources :likes
+          resources :comments
+        end
+      end
+      namespace :v1 do
+        resources :users do
+          concerns :photos_concern
+        end
+
+        resources :products do
+          concerns :photos_concern
+        end
+      end
+
+      namespace :v2 do
+        resources :persons do
+          concerns :photos_concern
+        end
+      end
+    end
+
+    validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
+  end
+
   def test_big_example
     example = {
         'get' => {
