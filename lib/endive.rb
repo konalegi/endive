@@ -1,14 +1,12 @@
 require 'reel'
 require 'mustermann'
 require 'jbuilder'
-require 'minitest/autorun'
 
 require 'endive/version'
 require 'endive/core_ext'
 require 'endive/dispatch'
 require 'endive/routing'
 require 'endive/support'
-require 'endive/testing'
 
 
 module Endive
