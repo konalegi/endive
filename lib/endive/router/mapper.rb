@@ -6,8 +6,8 @@ module Endive
       class << self
         attr_reader :instance
 
-        def build(&block)
-          @instance = new block
+        def build(router_class, &block)
+          @instance = new(router_class, &block)
         end
 
         def normalize_path(path)
@@ -19,8 +19,9 @@ module Endive
         end
       end
 
-      def initialize(block)
-        @router = Endive::Router::TreeRouter.new
+      def initialize(router_class, &block)
+        raise ArgumentError.new('no block given') unless block_given?
+        @router = router_class.new
         @scope = Endive::Router::Scope.new({ path_names: {}})
         @concerns = {}
         @nesting = []

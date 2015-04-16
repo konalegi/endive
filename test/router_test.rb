@@ -18,7 +18,7 @@ class RouterTest < Minitest::Test
       'post' => { '/photos/custom_action' => 'photos#custom_action' }
     }
 
-    Endive::Router::Mapper.build do
+    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
       post   'photos',      controller: 'photos', action: :create
       get    'photos',      controller: 'photos', action: :index
       get    'photos/:id',  controller: 'photos', action: :show
@@ -42,7 +42,7 @@ class RouterTest < Minitest::Test
       'delete' => { '/photos/:id' => 'photos#destroy' }
     }
 
-    Endive::Router::Mapper.build do
+    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
       resources :photos
     end
 
@@ -73,7 +73,7 @@ class RouterTest < Minitest::Test
       }
     }
 
-    Endive::Router::Mapper.build do
+    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
       namespace :admin do
         resources :photos
       end
@@ -93,7 +93,7 @@ class RouterTest < Minitest::Test
       'delete' => { '/admin/photos/delete_all' => 'admin/photos#delete_all' }
     }
 
-    Endive::Router::Mapper.build do
+    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
       namespace :admin do
 
         resources :photos, only: [:index] do
@@ -128,7 +128,7 @@ class RouterTest < Minitest::Test
       }
     }
 
-    Endive::Router::Mapper.build do
+    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
 
       concern :photos do
         resources :photos, only: [:index, :show]
@@ -201,7 +201,7 @@ class RouterTest < Minitest::Test
         }
     }
 
-    Endive::Router::Mapper.build do
+    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
 
       scope 'organizations/:organization_id', module: :organizations do
 
@@ -264,7 +264,7 @@ class RouterTest < Minitest::Test
       'put' => { '/comments/:gid' => 'comments#update' }
     }
 
-    Endive::Router::Mapper.build do
+    Endive::Router::Mapper.build(Endive::Router::TreeRouter) do
       resources :comments, only: [:show, :index, :update], param: :gid
     end
 
