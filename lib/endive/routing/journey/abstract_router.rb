@@ -8,7 +8,9 @@ module Endive
           end
         end
 
+        def find_route_template(method, path); end
         def find_route(method, path); end
+
         def print; end
       end
     end

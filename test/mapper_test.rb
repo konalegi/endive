@@ -251,53 +251,13 @@ class MapperTest < Minitest::Test
     validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
-<<<<<<< HEAD
-
-
-
-  # def test_find_route
-  #
-  #   Endive::Router.build do
-  #
-  #     resources :comments, only: [:show, :index]
-  #
-  #   end
-  #
-  #
-  #   route = Endive::Router.find_route('get', '/comments/1').to_s
-  #
-  #   assert_equal route, '/comments/:id'
-  # end
-
-
-
-  def show(routes)
-    count = 0
-
-    routes.each do |meth, value|
-
-      value.each do |path , action|
-        count += 1
-        p "#{meth.to_s.upcase}  #{path.to_s}  CONTROLLER : #{action}"
-=======
   def validate_router(sample_routes, router)
     sample_routes.each do  |method, routes_hash|
       routes_hash.each do |route_path, controller|
-<<<<<<< HEAD
-        assert_equal controller, router.find_route(method, route_path).fetch(:to)
->>>>>>> fix routes tests
-=======
-        route_obj = router.find_route(method, route_path)
-<<<<<<< HEAD
-        assert_equal controller, "#{route_obj[:controller]}##{route_obj[:action]}"
->>>>>>> simple route parsing with new dsl
-=======
+        route_obj = router.find_route_template(method, route_path)
         route_and_action = "#{route_obj[:controller]}##{route_obj[:action]}" if route_obj
         assert_equal controller, route_and_action, "cant found route for method: #{method} and route: #{route_path}"
->>>>>>> add more info on test failure
       end
     end
-
-    p "count = #{count}"
   end
 end

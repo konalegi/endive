@@ -15,8 +15,12 @@ module Endive
           end
         end
 
-        def find_route(method, path)
+        def find_route_template(method, path)
           @hash[method.to_s][path]
+        end
+
+        def find_route(method, path)
+
         end
 
       end
