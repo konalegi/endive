@@ -1,8 +1,6 @@
 require 'test_helper'
 
 class MapperTest < Minitest::Test
-
-
   def test_match_methods
     example = {
       'get' => {
@@ -95,9 +93,7 @@ class MapperTest < Minitest::Test
 
     Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
       namespace :admin do
-
         resources :photos, only: [:index] do
-
           member do
             post :publish
           end
@@ -105,7 +101,6 @@ class MapperTest < Minitest::Test
           collection do
             delete :delete_all
           end
-
         end
       end
     end
@@ -129,7 +124,6 @@ class MapperTest < Minitest::Test
     }
 
     Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
-
       concern :photos do
         resources :photos, only: [:index, :show]
       end
@@ -145,18 +139,13 @@ class MapperTest < Minitest::Test
       scope 'posts/:post_id', module: :posts do
         concerns :photos, :comments
       end
-
     end
 
     validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
   end
 
-
-
   def test_big_example
-
     example = {
-
         'get' => {
           '/organizations/:organization_id/photos' => 'organizations/photos#index',
           '/organizations/:organization_id/photos/:id' => 'organizations/photos#show',
@@ -202,29 +191,22 @@ class MapperTest < Minitest::Test
     }
 
     Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
-
       scope 'organizations/:organization_id', module: :organizations do
-
         resources :photos, only: [:show, :index, :update, :destroy, :create] do
           member do
             post :publish
           end
-
         end
 
         resources :clients, only: [:index]
-
         resources :friendship_offers, only: [:index, :create] do
-
           collection do
             put :approve
             delete :remove
           end
-
         end
 
         resources :friends, only: [:index, :destroy]
-
         resources :movies, only: [:show, :index, :update, :destroy, :create] do
           member do
             post :publish
@@ -245,9 +227,7 @@ class MapperTest < Minitest::Test
             end
           end
         end
-
       end
-
     end
 
     validate_router(example, Endive::Routing::Mapping::Mapper.instance.router)
@@ -320,5 +300,4 @@ class MapperTest < Minitest::Test
 
     p "count = #{count}"
   end
-
 end
