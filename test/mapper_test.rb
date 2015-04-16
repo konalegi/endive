@@ -16,7 +16,7 @@ class MapperTest < Minitest::Test
       'post' => { '/photos/custom_action' => 'photos#custom_action' }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       post   'photos',      controller: 'photos', action: :create
       get    'photos',      controller: 'photos', action: :index
       get    'photos/:id',  controller: 'photos', action: :show
@@ -40,7 +40,7 @@ class MapperTest < Minitest::Test
       'delete' => { '/photos/:id' => 'photos#destroy' }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       resources :photos
     end
 
@@ -71,7 +71,7 @@ class MapperTest < Minitest::Test
       }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       namespace :admin do
         resources :photos
       end
@@ -91,7 +91,7 @@ class MapperTest < Minitest::Test
       'delete' => { '/admin/photos/delete_all' => 'admin/photos#delete_all' }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       namespace :admin do
         resources :photos, only: [:index] do
           member do
@@ -123,7 +123,7 @@ class MapperTest < Minitest::Test
       }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       concern :photos do
         resources :photos, only: [:index, :show]
       end
@@ -163,7 +163,7 @@ class MapperTest < Minitest::Test
       }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       concern :photos_concern do
         resources :photos do
           resources :likes
@@ -236,7 +236,7 @@ class MapperTest < Minitest::Test
         }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       scope 'organizations/:organization_id', module: :organizations do
         resources :photos, only: [:show, :index, :update, :destroy, :create] do
           member do
@@ -290,7 +290,7 @@ class MapperTest < Minitest::Test
       'put' => { '/comments/:gid' => 'comments#update' }
     }
 
-    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter) do
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::TreeRouter::Router) do
       resources :comments, only: [:show, :index, :update], param: :gid
     end
 
