@@ -24,19 +24,47 @@ module Endive
               post :create if parent_resource.actions.include?(:create)
             end
 
-            member do
-              get :edit if parent_resource.actions.include?(:edit)
-              get :show if parent_resource.actions.include?(:show)
-              if parent_resource.actions.include?(:update)
-                patch :update
-                put   :update
-              end
-              delete :destroy if parent_resource.actions.include?(:destroy)
-            end
+            set_member_mappings_for_resource
           end
 
           self
         end
+
+        def resource(*resources, &block)
+          options = resources.extract_options!.dup
+
+          if apply_common_behavior_for(:resource, resources, options, &block)
+            return self
+          end
+
+          resource_scope(:resource, SingletonResource.new(resources.pop, options)) do
+            yield if block_given?
+
+            concerns(options[:concerns]) if options[:concerns]
+
+            collection do
+              post :create
+            end if parent_resource.actions.include?(:create)
+
+            set_member_mappings_for_resource
+          end
+
+          self
+        end
+
+        def set_member_mappings_for_resource
+          member do
+            get :edit if parent_resource.actions.include?(:edit)
+            get :show if parent_resource.actions.include?(:show)
+            if parent_resource.actions.include?(:update)
+              patch :update
+              put   :update
+            end
+            delete :destroy if parent_resource.actions.include?(:destroy)
+          end
+        end
+
+
 
         def nested_options #:nodoc:
           { :as => parent_resource.member_name }
