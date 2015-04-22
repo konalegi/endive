@@ -1,5 +1,5 @@
 module Endive
-  module Dispatch
+  module Server
     class ConnectionHandler
       include Celluloid
       include Celluloid::Logger
