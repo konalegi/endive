@@ -14,12 +14,10 @@ module Endive
       @initialized = true
     end
 
-
-    def route!(meth, connection, request)
-
+    # status, response_data, headers
+    def serve(meth, params, request)
+      [:ok, 'sdasd', {}]
     end
-
-
 
   end
 end
