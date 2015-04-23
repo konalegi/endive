@@ -7,7 +7,7 @@ module Endive
         @base_request = base_request
       end
 
-      delegate :headers, :respond, :websocket?, :body, :query_string, to: :base_request
+      delegate :headers, :respond, :websocket?, :body, :query_string, :path, to: :base_request
 
       def params
         @params ||= Support::ParamsParser.get_params method, headers, query_string, body
