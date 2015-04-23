@@ -22,10 +22,12 @@ module Endive
           end
 
           def find_route_template(method, path)
+            method = method.to_s
             @template_hash[method.to_s][path]
           end
 
           def find_route(method, path)
+            method = method.to_s
             @tree.find_by_path(method, path)
           end
 
