@@ -32,6 +32,10 @@ module Endive
 
     end
 
+    def root
+      application && application.config.root
+    end
+
     def env
       @_env ||= Support::StringInquirer.new(ENV['ENDIVE_ENV'] || 'development')
     end

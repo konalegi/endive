@@ -1,22 +1,30 @@
+require 'endive/application/configuration'
+
 module Endive
   class Application
     include Singleton
 
+    attr_reader :config
+
     def initialize
       @initialized = false
+      @config = Configuration.new
     end
 
     def initialize!
-      # run initializers
-      # load routes
-      # load database configs
+      @config.load_database_configs
+      @config.run_initializers
+      @config.load_routes
 
       @initialized = true
     end
 
     # status, response_data, headers
     def serve(meth, params, request)
-      [:ok, 'sdasd', {}]
+      found_route = @config.router.find_route(meth, request.path)
+      found_route[:options].merge!(request.params)
+
+      [:ok, found_route.to_s, {}]
     end
 
   end
