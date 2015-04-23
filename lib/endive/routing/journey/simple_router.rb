@@ -22,10 +22,12 @@ module Endive
         end
 
         def find_route_template(method, path)
+          method = method.to_s
           @route_templates[method.to_s][path].to_s
         end
 
         def find_route(method, path)
+          method = method.to_s
           mustermann, data = @routes[method].find {|k,v| k.match(path)}
           mustermann = mustermann.match(path)
           mustermann.names.each{ |key| data[key] = mustermann[key] }
