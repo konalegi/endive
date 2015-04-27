@@ -10,6 +10,7 @@ module Endive
       def repond; end
       def websocket?; end
       def path; end
+      def ext; end
 
     end
   end
