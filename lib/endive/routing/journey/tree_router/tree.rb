@@ -25,7 +25,7 @@ module Endive
 
             path_nodes.each do |_path|
               current_node = current_node.get_child(_path)
-              raise ArgumentError.new("Path #{path} not found at point #{_path}") unless current_node
+              raise RouteNotFound.new("Path #{path} not found at point #{_path}") unless current_node
               opts[current_node.unparameterized_path] = _path if current_node.parameterized?
             end
             current_node.data.merge(opts)

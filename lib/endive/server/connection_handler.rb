@@ -20,8 +20,10 @@ module Endive
       end
 
       def handle_http_request(request)
-        status, response_data, headers = @app.serve(request.method, request.params, request)
-        request.respond status, headers, response_data
+        request.respond *@app.serve(request.method, request.params, request)
+      rescue RuntimeError => e
+        # here frow Internal Server Error
+        request.respond 500, '', {}
       end
 
       def handle_websocker_request

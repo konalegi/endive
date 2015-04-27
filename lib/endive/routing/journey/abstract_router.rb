@@ -1,6 +1,9 @@
 module Endive
   module Routing
     module Journey
+      class JourneyError < RuntimeError; end
+      class RouteNotFound < JourneyError; end
+
       class AbstractRouter
         def add_route(method, path, controller_and_method, options = {});
           local_variables.each do |var|
