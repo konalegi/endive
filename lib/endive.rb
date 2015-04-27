@@ -11,11 +11,6 @@ require 'endive/server'
 require 'endive/application'
 
 module Endive
-  JSON_TYPE               = 'application/json'
-  FORM_TYPE               = 'application/x-www-form-urlencoded'
-  CONTENT_TYPE_HEADER_KEY = 'Content-Type'
-
-
   class << self
     @application = nil
 

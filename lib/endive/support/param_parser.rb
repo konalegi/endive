@@ -1,8 +1,12 @@
-require 'cgi'
 module Endive
   module Support
     class ParamsParser
+      require 'cgi'
       class << self
+
+        JSON_TYPE               = 'application/json'
+        FORM_TYPE               = 'application/x-www-form-urlencoded'
+        CONTENT_TYPE_HEADER_KEY = 'Content-Type'
 
         def get_params method, headers, query_string, body
           case method
