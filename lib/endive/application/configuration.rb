@@ -3,13 +3,18 @@ module Endive
     class Configuration
 
       attr_accessor :root
-      attr_reader :router
+      attr_accessor :router, :view_path
 
       def initialize()
+        @view_path = "app/views"
       end
 
       def load_database_configs()
-        load_yaml("#{root}/config/database.yml")
+        @db_config ||= load_yaml("#{root}/config/database.yml")
+      end
+
+      def db_config
+        @db_config[Endive.env]
       end
 
       def run_initializers()
@@ -18,7 +23,7 @@ module Endive
 
       def load_routes()
         require "#{root}/config/routes.rb"
-        @router = Endive::Routing::Mapping::Mapper.instance.router
+        @router ||= Endive::Routing::Mapping::Mapper.instance.router
       end
 
       private
