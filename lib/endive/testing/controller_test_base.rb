@@ -1,35 +1,19 @@
 module Endive
   module Testing
     class ControllerTestBase < Minitest::Test
-
-      RESPONSE_STATUSES = {
-          success: 200, created: 201,
-          not_found: 404, unprocessable_entity: 422,
-          forbidden: 403, unauthorized: 401
-      }
-
-      class NotFoundRoute < RuntimeError; end
-
-      attr_reader :data, :headers
+      attr_reader :data, :headers, :status
 
       [:get, :post, :put, :delete].each do |meth|
-
         define_method meth do |path, params = {}|
-          mustermann = Mustermann.new path
-          controller_action = Endive::Router.routes[meth.to_s][mustermann]
-
-          if controller_action.present?
-            options = { to: controller_action }
-            responder = Endive::Responder.new mustermann, options
-            @data, @headers = responder.dispatch(params)
-          else
-            raise NotFoundRoute
-          end
+          found_route = Endive.application.config.router.find_route(meth, path)
+          found_route[:options].merge!(params)
+          responder = Dispatch::Responder.new(found_route[:controller], found_route[:action])
+          @status, @data, @headers = responder.dispatch(found_route)
         end
       end
 
-      def assert_response status
-        assert_equal RESPONSE_STATUSES[status], headers[:code]
+      def assert_response(status)
+        assert_equal status, @status
       end
 
     end

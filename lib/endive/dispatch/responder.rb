@@ -6,10 +6,9 @@ module Endive
       include Celluloid::Logger
 
       # should initilized with ControllerPath and ActionName
-      def initialize controller_path, action_name, ext = '.json.jbuilder'
+      def initialize controller_path, action_name
         @controller_path = controller_path
         @action_name = action_name.to_sym
-        @ext = ext
       end
 
       def dispatch(params)
@@ -32,7 +31,7 @@ module Endive
       end
 
       def view_path
-        @view_path ||= File.join(Endive.root, Endive.application.config.view_path, @controller_path, [@action_name, @ext].join)
+        @view_path ||= File.join(@controller_path, @action_name.to_s)
       end
     end
   end
