@@ -4,7 +4,8 @@ module Endive
       include Celluloid::Logger
 
       def initialize(app, options = {})
-        options = options.merge({ip: '127.0.0.1', port: 3000})
+
+        options = { ip: '127.0.0.1', port: 3000 }.merge(options)
 
         @connectionPool = ConnectionHandler.pool(args: [app])
 
