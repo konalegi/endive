@@ -11,7 +11,7 @@ module Endive
       end
 
       def render(view_path, options = {})
-        @status = options[:status] || :success
+        @status = options[:status] || :ok
         @data ||= Jbuilder.new { |json| eval(File.read(full_path_to_view(view_path))) }.target!
       end
 
