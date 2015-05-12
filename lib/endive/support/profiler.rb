@@ -8,8 +8,16 @@ module Endive
             yield
           end
 
-          # Print a flat profile to text
           printer = RubyProf::FlatPrinter.new(result)
+          printer.print(STDOUT)
+        end
+
+        def profile_with_graph_printer &block
+          result = RubyProf.profile do
+            yield
+          end
+
+          printer = RubyProf::GraphPrinter.new(result)
           printer.print(STDOUT)
         end
 
