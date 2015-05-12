@@ -14,8 +14,10 @@ module Endive
       def dispatch(params)
         ctrl = controller_class.new(params)
         info "Processing by #{ctrl.class.to_s} action: #{@action_name}, params: #{params}"
-        ctrl.send(@action_name)
-        ctrl.render(view_path)
+
+        info "#{ctrl.class.to_s}##{@action_name} Run In: #{Support::Profiler.execution_time{ ctrl.send(@action_name) }}"
+
+        info "View: #{view_path} rendered in: #{Support::Profiler.execution_time{ctrl.render(view_path)}}"
         ctrl.headers["Content-Type"] = "application/json; charset=utf-8"
         [ctrl.status, ctrl.data, ctrl.headers]
       end
