@@ -12,6 +12,7 @@ module Endive
     end
 
     def initialize!
+      @config.default_logger_config
       @config.load_database_configs
       @config.load_routes
       @config.run_initializers

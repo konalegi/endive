@@ -9,6 +9,7 @@ require 'endive/routing'
 require 'endive/support'
 require 'endive/server'
 require 'endive/application'
+require 'endive/logger'
 
 module Endive
   class << self
@@ -20,6 +21,11 @@ module Endive
     def application
       @application ||= Application.instance
     end
+
+    def logger
+      @logger ||= Logger.instance
+    end
+
 
     delegate :initialize!, :initialized?, to: :application
 

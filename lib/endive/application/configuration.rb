@@ -26,6 +26,15 @@ module Endive
         @router ||= Endive::Routing::Mapping::Mapper.instance.router
       end
 
+      def default_logger_config()
+        if Endive.env == 'development'
+          Endive.logger.level = :debug
+        else
+          Endive.logger.log_file = ::Logger.new("#{root}/log/#{Endive.env}.log")
+          Endive.logger.level = :info
+        end
+      end
+
       private
         def load_yaml(path)
           yaml = Pathname.new(path) if path

@@ -1,7 +1,6 @@
 module Endive
   module Server
     class HttpServer < Reel::Server::HTTP
-      include Celluloid::Logger
 
       def initialize(app, options = {})
 
@@ -9,7 +8,7 @@ module Endive
 
         @connectionPool = ConnectionHandler.pool(args: [app])
 
-        info "listening on #{options[:ip]}:#{options[:port]}"
+        Endive.logger.info "listening on #{options[:ip]}:#{options[:port]}"
         super(options[:ip], options[:port], &method(:on_connection))
       end
 
