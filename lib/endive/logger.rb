@@ -28,5 +28,9 @@ module Endive
       super
     end
 
+    def << (msg)
+      debug(msg)
+    end
+
   end
 end
