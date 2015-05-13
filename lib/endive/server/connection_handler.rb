@@ -20,10 +20,9 @@ module Endive
       end
 
       def handle_http_request(request)
-        tm_start = Time.now.to_f
-        request.respond *@app.serve(request.method, request.params, request)
-        request_time = (Time.now.to_f - tm_start)*1000
-        info "#{request.method} #{request.path} processed in #{request_time.round(2)} ms"
+        Support::Profiler.execution_time "#{request.method} #{request.path} Processed In: %s ms" do
+          request.respond *@app.serve(request.method, request.params, request)
+        end
       rescue RuntimeError => e
         # here frow Internal Server Error
         request.respond 500, '', {}
