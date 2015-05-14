@@ -26,7 +26,7 @@ module Endive
     # if any exception is raised, will be catched with upper rescue block and return 500 (Internal Server Error) code
     def serve(meth, params, request)
       found_route = @config.router.find_route(meth, request.path)
-      found_route[:options].merge!(request.params)
+      found_route.merge!(request.params)
       responder = Dispatch::Responder.new(found_route[:controller], found_route[:action])
       status, data, headers = responder.dispatch(found_route)
       [status, headers, data]
