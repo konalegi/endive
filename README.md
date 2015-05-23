@@ -1,5 +1,7 @@
 # Endive
+This is project for training of Rails and Celluloid internals.
 
+Exmaple project build on top of the this framework ( https://github.com/konalegi/ruby_fias_api )
 TODO: Write a gem description
 
 ## Installation
