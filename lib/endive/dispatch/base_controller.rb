@@ -1,7 +1,12 @@
+require 'endive/support/callbacks'
 module Endive
   module Dispatch
     class BaseController
-      include Celluloid::Logger
+      include Endive::Support::Callbacks
+
+      define_callback :before_action
+      define_callback :after_action
+
       attr_reader :headers, :params, :data, :status
 
       def initialize(params)
