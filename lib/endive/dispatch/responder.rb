@@ -16,9 +16,9 @@ module Endive
         Endive.logger.info "Processing by #{ctrl.class.to_s} action: #{@action_name}, params: #{params}"
 
         Support::Profiler.execution_time "#{ctrl.class.to_s}##{@action_name} Run In: %s ms" do
-          ctrl.run_callback :before_action, action: @action_name
+          ctrl.run_callback :before_action, action_name: @action_name
           ctrl.send(@action_name)
-          ctrl.run_callback :after_action, action: @action_name
+          ctrl.run_callback :after_action, action_name: @action_name
         end
 
         Support::Profiler.execution_time "View: #{view_path} Rendered in: %s ms" do

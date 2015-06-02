@@ -28,12 +28,12 @@ module Endive
         def run_callback(name, instance, options = {})
           name = name.to_sym
           methods = _callbacks[name]
-          action = options[:action]
+          action_name = options[:action_name]
 
           methods.each do |method|
             method.each do |method_name, method_options|
               if method_options[:only].present?
-                instance.send(method_name) if method_options[:only].include? action
+                instance.send(method_name) if method_options[:only].include? action_name
               else
                 instance.send(method_name)
               end
