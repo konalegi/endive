@@ -7,17 +7,17 @@ module Endive
       define_callback :before_action
       define_callback :after_action
 
-      attr_reader :headers, :params, :data, :status
+      attr_reader :headers, :params, :data, :status, :request_headers
 
-      def initialize(params)
+      def initialize(params, request_headers)
         @params = Support::SymHash.new(params)
-        @headers = {}
+        @request_headers = Support::SymHash.new(request_headers)
         @data = nil
       end
 
       def render(view_path, options = {})
-        @status = options[:status] || :ok
         @data ||= Jbuilder.new { |json| eval(File.read(full_path_to_view(view_path))) }.target!
+        @status = options[:status] || :ok
       end
 
       def headers
