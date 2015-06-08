@@ -15,9 +15,16 @@ module Endive
         @data = nil
       end
 
-      def render(view_path, options = {})
-        @data ||= Jbuilder.new { |json| eval(File.read(full_path_to_view(view_path))) }.target!
-        @status = options[:status] || :ok
+      def render(options, extra_options = {})
+        if options.kind_of? String
+          @data ||= Jbuilder.new { |json| eval(File.read(full_path_to_view(options))) }.target!
+        elsif options.kind_of? Hash and options[:json].present?
+          @data ||= options[:json].to_json
+        else
+          raise ArgumentError
+        end
+
+        @status = extra_options[:status] || :ok
       end
 
       def headers
