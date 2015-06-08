@@ -24,7 +24,7 @@ module Endive
           request.respond *@app.serve(request.method, request.params, request)
         end
       rescue RuntimeError => e
-        # here frow Internal Server Error
+        Endive.logger.error e
         request.respond 500, '', {}
       end
 
