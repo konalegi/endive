@@ -13,7 +13,7 @@ module Endive
         define_method meth do |path, params = {}|
           found_route = Endive.application.config.router.find_route(meth, path)
           found_route[:options].merge!(params)
-          responder = Dispatch::Responder.new(found_route[:controller], found_route[:action], request_headers)
+          responder = Dispatch::Responder.new(found_route[:controller], found_route[:action], meth, request_headers)
           @status, @data, @headers = responder.dispatch(found_route)
         end
       end

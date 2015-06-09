@@ -6,14 +6,15 @@ module Endive
       include Celluloid::Logger
 
       # should initilized with ControllerPath, ActionName and RequestHeaders
-      def initialize(controller_path, action_name, request_headers)
+      def initialize(controller_path, action_name, request_method, request_headers)
         @controller_path = controller_path
         @action_name = action_name.to_sym
+        @request_method = request_method
         @request_headers = request_headers
       end
 
       def dispatch(params)
-        ctrl = controller_class.new(params, @request_headers)
+        ctrl = controller_class.new(params, @request_method, @request_headers)
         Endive.logger.info "Processing by #{ctrl.class.to_s} action: #{@action_name}, params: #{params}"
 
         ctrl.run_callback :before_action, action_name: @action_name

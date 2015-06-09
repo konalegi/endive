@@ -7,11 +7,12 @@ module Endive
       define_callback :before_action
       define_callback :after_action
 
-      attr_reader :headers, :params, :data, :status, :request_headers
+      attr_reader :headers, :params, :data, :status, :request_headers, :request_method
 
-      def initialize(params, request_headers)
+      def initialize(params, request_method, request_headers)
         @params = Support::SymHash.new(params)
-        @request_headers = Support::SymHash.new(request_headers)
+        @request_headers = request_headers
+        @request_method = request_method
         @data = nil
       end
 
