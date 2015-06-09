@@ -29,6 +29,7 @@ module Endive
         def find_route(method, path)
           method = method.to_s
           mustermann, data = @routes[method].find {|k,v| k.match(path)}
+          raise RouteNotFound.new("Path #{path} not found") unless mustermann
           mustermann = mustermann.match(path)
           mustermann.names.each{ |key| data[key] = mustermann[key] }
           data
