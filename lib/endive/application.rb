@@ -25,10 +25,6 @@ module Endive
     # HEADERS - http headers of response
     # if any exception is raised, will be catched with upper rescue block and return 500 (Internal Server Error) code
     def serve(request)
-      if request.method == :options
-        return [:ok, '', Support::AllowCors.headers]
-      end
-
       found_route = @config.router.find_route(request.method, request.path)
       found_route.merge!(request.params)
       responder = Dispatch::Responder.new(found_route[:controller], found_route[:action], request.method, request.headers)
