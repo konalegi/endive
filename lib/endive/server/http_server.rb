@@ -6,7 +6,7 @@ module Endive
 
         options = { ip: '127.0.0.1', port: 3000 }.merge(options)
 
-        @connectionPool = ConnectionHandler.pool(args: [app])
+        @connectionPool = ConnectionHandler.pool(args: [app], size: 20)
         Endive.logger.level = :debug if ENV['ENDIVE_DEBUG']
 
         Endive.logger.info "listening on #{options[:ip]}:#{options[:port]}"
