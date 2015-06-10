@@ -10,7 +10,8 @@ module Endive
 
       def handle_connection(connection)
         connection.each_request { |req| handle_request(Server::ReelRequest.new(req), connection) }
-      rescue Reel::SocketError
+      rescue Exception => ex
+        Endive.logger.error "some unhandled exception in handle_connection: #{ex}"
         connection.close
       end
 
