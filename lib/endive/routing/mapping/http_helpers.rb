@@ -23,6 +23,10 @@ module Endive
           map_method(:delete, args, &block)
         end
 
+        def options(*args, &block)
+          map_method(:options, args, &block)
+        end
+
         private
           def map_method(method, args, &block)
             options = args.extract_options!

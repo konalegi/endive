@@ -29,4 +29,14 @@ class SimpleRouterTest < Minitest::Test
     refute_nil router.find_route('get', '/v1/products/1/photos/3/likes/23')
     refute_nil router.find_route('get', '/v1/products/1/photos/3/likes')
   end
+
+  def test_options_method
+    Endive::Routing::Mapping::Mapper.build(Endive::Routing::Journey::SimpleRouter) do
+      match '*path', controller: 'application', action: 'allow_cors', via: :options
+    end
+
+    router = Endive::Routing::Mapping::Mapper.instance.router
+    refute_nil router.find_route('options', '/v1/users/1/photos/3/comments/45')
+  end
+
 end

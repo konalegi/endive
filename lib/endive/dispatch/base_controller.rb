@@ -7,12 +7,15 @@ module Endive
       define_callback :before_action
       define_callback :after_action
 
-      attr_reader :headers, :params, :data, :status, :request_headers
+      attr_reader :params, :data, :status, :request_headers, :request_method
+      attr_accessor :headers
 
-      def initialize(params, request_headers)
+      def initialize(params, request_method, request_headers)
         @params = Support::SymHash.new(params)
-        @request_headers = Support::SymHash.new(request_headers)
+        @request_headers = request_headers
+        @request_method = request_method
         @data = nil
+        @headers = {}
       end
 
       def render(options, extra_options = {})
@@ -25,10 +28,6 @@ module Endive
         end
 
         @status = extra_options[:status] || :ok
-      end
-
-      def headers
-        @headers ||= {}
       end
 
       private

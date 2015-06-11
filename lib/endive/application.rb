@@ -24,10 +24,10 @@ module Endive
     # RESPONSE_DATA - string data
     # HEADERS - http headers of response
     # if any exception is raised, will be catched with upper rescue block and return 500 (Internal Server Error) code
-    def serve(meth, params, request)
-      found_route = @config.router.find_route(meth, request.path)
+    def serve(request)
+      found_route = @config.router.find_route(request.method, request.path)
       found_route.merge!(request.params)
-      responder = Dispatch::Responder.new(found_route[:controller], found_route[:action], request.headers)
+      responder = Dispatch::Responder.new(found_route[:controller], found_route[:action], request.method, request.headers)
       status, data, headers = responder.dispatch(found_route)
       [status, headers, data]
     rescue Routing::Journey::RouteNotFound => e
