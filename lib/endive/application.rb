@@ -27,7 +27,7 @@ module Endive
     def serve(request)
       found_route = @config.router.find_route(request.method, request.path)
       found_route.merge!(request.params)
-      responder = Dispatch::Responder.new(found_route[:controller], found_route[:action], request.method, request.headers)
+      responder = Dispatch::Responder.new(found_route[:controller], found_route[:action], request)
       status, data, headers = responder.dispatch(found_route)
       [status, headers, data]
     rescue Routing::Journey::RouteNotFound => e
