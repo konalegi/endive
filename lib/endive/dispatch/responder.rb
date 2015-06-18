@@ -18,7 +18,7 @@ module Endive
 
         ctrl.run_callback :before_action, action_name: @action_name unless @request.method == :options
 
-        unless ctrl.data.present?
+        unless ctrl.response.body.present?
           Support::Profiler.execution_time "#{ctrl.class.to_s}##{@action_name} Run In: %s ms" do
             ctrl.send(@action_name)
             ctrl.run_callback :after_action, action_name: @action_name unless @request.method == :options
@@ -29,8 +29,8 @@ module Endive
           end
         end
 
-        ctrl.headers["Content-Type"] = "application/json; charset=utf-8"
-        [ctrl.status, ctrl.data, ctrl.headers]
+        ctrl.response.headers["Content-Type"] = "application/json; charset=utf-8"
+        [ctrl.response.status, ctrl.response.body, ctrl.response.headers]
       end
 
       private

@@ -7,23 +7,23 @@ module Endive
       define_callback :before_action
       define_callback :after_action
 
-      attr_reader :params, :data, :status, :request
-      attr_accessor :headers
+      attr_reader :params, :request, :response
 
       def initialize(params, request)
         @params = Support::SymHash.new(params)
         @request = request
+        @response = Endive::Dispatch::Response.new
         @data = nil
         @headers = {}
       end
 
       def render(options, extra_options = {})
         if options.kind_of? String
-          @data ||= Jbuilder.new { |json| eval(File.read(full_path_to_view(options))) }.target!
-          @status = extra_options[:status] || :ok
+          response.body ||= Jbuilder.new { |json| eval(File.read(full_path_to_view(options))) }.target!
+          response.status = extra_options[:status] || :ok
         elsif options.kind_of? Hash and options[:json].present?
-          @data ||= options[:json].to_json
-          @status = options[:status] || :ok
+          response.body ||= options[:json].to_json
+          response.status = options[:status] || :ok
         else
           raise ArgumentError
         end
