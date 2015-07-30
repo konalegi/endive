@@ -32,7 +32,7 @@ module Endive
           raise RouteNotFound.new("Path #{path} not found") unless mustermann
           mustermann = mustermann.match(path)
           mustermann.names.each{ |key| data[key] = mustermann[key] }
-          data.deep_dup
+          data.clone
         end
       end
     end
